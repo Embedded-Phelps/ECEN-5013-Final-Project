@@ -1,8 +1,7 @@
 #include "includes.h"
-extern CircBuf_t * rx_buf;
 
 int main(void){
-	
+	int32_t temp;
 	/* Enable the clock gate to ALL the Port module */
 	PORT_ENABLE_CLK(A);		
 	PORT_ENABLE_CLK(B);
@@ -10,12 +9,12 @@ int main(void){
 	PORT_ENABLE_CLK(D);
 	PORT_ENABLE_CLK(E);
 	
-	/* Initialize uart0 */
-	uart0_Init(9600,0,0,8,1);
-	
 	/* Enable system interrupt */
 	__enable_irq();
+	app_ADCInit();
 
-	while (1);
-	
+	while (1){
+		temp = read_OnChipTemperature();
+		temp = temp;
+	}
 }
