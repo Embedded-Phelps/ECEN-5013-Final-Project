@@ -1,72 +1,248 @@
-/***************************************************************************
- *
- *	Filename: 		gpio.c
- *  Description:  	KL25Z GPIO functions implementation
- *  Author: 		ShuTing Guo  
- *  Date: 			Oct. 2016
- *	
- *  Pin Usage Info:
- *	PTB18	--	RED LED
- *	PTB19	--	GREEN LED
- *	PTD1	--	BLUE LED
- *	PTC5	--	SPI0 SCK
- *	PTC6	--	SPI0 MOSI
- *	PTC7	--	SPI0 MISO
- *	PTC12	--	SPI0 SS
- *	PTC13	--	NRF24L01 CE
- *	PTC16	--	NRF24L01 IRQ
- *	PTA1	--	UART0 RX
- *	PTA2	--	UART0 TX
- *	PTE24	--	I2C0 SCL
- *	PTE25	--	I2C0 SDA
- *	PTB16	--	TSI0_CH9
- *	PTB17	--	TSI0_CH10
- *	PTB0	--	ADC0_SE8
- 
- *****************************************************************************/
- 
+
 #include "includes.h"
+/* Table of base addresses for GPIO instances. */
+GPIO_Type * const g_gpioBase[GPIO_INSTANCE_COUNT] = GPIO_BASE_PTRS;
 
-void board_Gpio_Init(void){
-	
-	/* Initialize pins for the RGB LEDs */
-	PORTB_PCR18 |= (PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK);               // Red LED: GPIO, digital output 
-    PORTB_PCR19 |= (PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK);               // GREENLED: GPIO, digital output
-    PORTD_PCR1  |= (PORT_PCR_MUX(1) | PORT_PCR_DSE_MASK);               // BLUE LED: GPIO, digital output
-    FGPIOB_PSOR |= 1<<18;                                               // Port output set to logic 1 
-    FGPIOB_PDDR |= 1<<18;                                               // Pin set for GPIO function 
-    FGPIOB_PSOR |= 1<<19;                                               
-    FGPIOB_PDDR |= 1<<19;                                               
-    FGPIOD_PSOR |= 1<<1;                                            
-    FGPIOD_PDDR |= 1<<1;                
-	
-	/* Initialize pins for the SPI0 interface */
-	PORTC_PCR5 |= PORT_PCR_MUX(2);										// Set PTC5 pin to SPI0 SCK function	
-	PORTC_PCR6 |= PORT_PCR_MUX(2);										// Set PTC6 pin to SPI0 MOSI function			
-	PORTC_PCR7 |= PORT_PCR_MUX(2);										// Set PTC7 pin to SPI0 MISO function 	
-	PORTC_PCR12|= PORT_PCR_MUX(1);										// Set PTC12 pin to GPIO function, serve as SS 
-	FGPIOC_PSOR|= 1<<12;												// Set SS pin as Output, default logic high
-	FGPIOC_PDDR|= 1<<12;                       
+/* Table of base addresses for PORT instances. */
+PORT_Type * const g_portBase[PORT_INSTANCE_COUNT] = PORT_BASE_PTRS;
 
-	/* Initialize pins for the NRF24L01 module */
-	PORTC_PCR13|= PORT_PCR_MUX(1);										// Set PCR13 as a GPIO pin, serve as CE
-	PORTC_PCR16|= PORT_PCR_MUX(1);										// Set PCR16 as a GPIO pin, serve as IRQ
-	FGPIOC_PCOR|= 1<<13;												// CE as output, default low
-	FGPIOC_PDDR|= 1<<13;												 
-	FGPIOC_PDDR|= 0<<16;												// IRQ as input
-	
-	/* Initialize pins for the UART0 interface */
-	PORTA_PCR1 = PORT_PCR_MUX(2);										// Set PTA1 pin to UART0 RX function
-	PORTA_PCR2 = PORT_PCR_MUX(2);										// Set PTA2 pin to UART0 TX function
-	
-	/* Initialize pins for the I2C0 interface */
-	PORTE_PCR24 = PORT_PCR_MUX(5);										// Set PTE24 pin to I2C0 SCL function
-	PORTE_PCR25 = PORT_PCR_MUX(5);										// Set PTE25 pin to I2C0 SDA function
-	
-	/* Initialize pins for the TSI0 interface */
-	PORTB_PCR16 = PORT_PCR_MUX(0);										// Set PTB16 pin to TSI0 CH9 function
-	PORTB_PCR17 = PORT_PCR_MUX(0);										// Set PTB17 pin to TSI0 CH10 function
-	
-	/* Initialize pin for the Ultrasonic Range Finder input */
-	PORTB_PCR0 = PORT_PCR_MUX(0);										// Set PTB0 pin to analog input function
+/* Table to save port IRQ enum numbers defined in CMSIS files. */
+const IRQn_Type g_portIrqId[PORT_INSTANCE_COUNT] = PORT_IRQS;
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_Init
+ * Description   : Initialize all GPIO pins used by board.
+ * To initialize the GPIO driver, two arrays similar with
+ * gpio_input_pin_user_config_t inputPin[] and
+ * gpio_output_pin_user_config_t outputPin[] should be defined in user's file.
+ * Then simply call GPIO_Init() and pass into these two arrays. If input
+ * or output pins is not needed, pass in a NULL.
+ *
+ *END**************************************************************************/
+void GPIO_Init(const gpio_input_pin_user_config_t * inputPins, const gpio_output_pin_user_config_t * outputPins)
+{
+    if (inputPins)
+    {
+        /* Initialize input pins.*/
+        while (inputPins->pinName != GPIO_PINS_OUT_OF_RANGE)
+        {
+            GPIO_InputPinInit(inputPins++);
+        }
+    }
+
+    if (outputPins)
+    {
+        /* Initialize output pins.*/
+        while (outputPins->pinName != GPIO_PINS_OUT_OF_RANGE)
+        {
+            GPIO_OutputPinInit(outputPins++);
+        }
+    }
 }
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_InputPinInit
+ * Description   : Initialize one GPIO input pin used by board.
+ *
+ *END**************************************************************************/
+void GPIO_InputPinInit(const gpio_input_pin_user_config_t *inputPin)
+{
+    /* Get actual port and pin number.*/
+    uint32_t port = GPIO_EXTRACT_PORT(inputPin->pinName);
+    uint32_t pin = GPIO_EXTRACT_PIN(inputPin->pinName);
+    GPIO_Type * gpioBase = g_gpioBase[port];
+    PORT_Type * portBase = g_portBase[port];
+
+    /* Un-gate port clock*/
+    //CLOCK_SYS_EnablePortClock(port);
+
+    /* Set current pin as gpio.*/
+    PORT_Hal_SetMuxMode(portBase, pin, portMuxAsGpio);
+
+    /* Set current pin as digital input.*/
+    GPIO_Hal_SetPinDir(gpioBase, pin, gpioDigitalInput);
+
+    /* Configure GPIO input features. */
+
+    PORT_Hal_SetPullCmd(portBase, pin, inputPin->config.isPullEnable);
+
+    PORT_Hal_SetPullMode(portBase, pin, inputPin->config.pullSelect);
+
+    PORT_Hal_SetPassiveFilterCmd(portBase, pin, inputPin->config.isPassiveFilterEnabled);
+
+    PORT_Hal_SetPinIntMode(portBase, pin, inputPin->config.interrupt);
+
+    /* Configure NVIC */
+    if ((inputPin->config.interrupt) && (g_portIrqId[port]))
+    {
+        /* Enable GPIO interrupt.*/
+        INT_SYS_EnableIRQ(g_portIrqId[port]); //?????
+    }
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_OutputPinInit
+ * Description   : Initialize one GPIO output pin used by board.
+ *
+ *END**************************************************************************/
+void GPIO_OutputPinInit(const gpio_output_pin_user_config_t *outputPin)
+{
+    /* Get actual port and pin number.*/
+    uint32_t port = GPIO_EXTRACT_PORT(outputPin->pinName);
+    uint32_t pin = GPIO_EXTRACT_PIN(outputPin->pinName);
+    GPIO_Type * gpioBase = g_gpioBase[port];
+    PORT_Type * portBase = g_portBase[port];
+
+    /* Un-gate port clock*/
+    //CLOCK_SYS_EnablePortClock(port);	//????
+
+    /* Set current pin as gpio.*/
+    PORT_Hal_SetMuxMode(portBase, pin, portMuxAsGpio);
+
+    /* Set current pin as digital output.*/
+    GPIO_Hal_SetPinDir(gpioBase, pin, gpioDigitalOutput);
+
+    /* Configure GPIO output features. */
+    GPIO_Hal_WritePinOutput(gpioBase, pin, outputPin->config.outputLogic);
+
+    PORT_Hal_SetSlewRateMode(portBase, pin, outputPin->config.slewRate);
+
+    PORT_Hal_SetDriveStrengthMode(portBase, pin, outputPin->config.driveStrength);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_GetPinDir
+ * Description   : Get current direction of individual GPIO pin.
+ *
+ *END**************************************************************************/
+gpio_pin_direction_t GPIO_GetPinDir(uint32_t pinName)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    return GPIO_Hal_GetPinDir(gpioBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_SetPinDir
+ * Description   : Set current direction of individual GPIO pin.
+ *
+ *END**************************************************************************/
+void GPIO_SetPinDir(uint32_t pinName, gpio_pin_direction_t direction)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    GPIO_Hal_SetPinDir(gpioBase, pin, direction);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_WritePinOutput
+ * Description   : Set output level of individual GPIO pin to logic 1 or 0.
+ *
+ *END**************************************************************************/
+void GPIO_WritePinOutput(uint32_t pinName, uint32_t output)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    GPIO_Hal_WritePinOutput(gpioBase, pin, output);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_SetPinOutput
+ * Description   : Set output level of individual GPIO pin to logic 1.
+ *
+ *END**************************************************************************/
+void GPIO_SetPinOutput(uint32_t pinName)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    GPIO_Hal_SetPinOutput(gpioBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_ClearPinOutput
+ * Description   : Set output level of individual GPIO pin to logic 0.
+ *
+ *END**************************************************************************/
+void GPIO_ClearPinOutput(uint32_t pinName)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    GPIO_Hal_ClearPinOutput(gpioBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_TogglePinOutput
+ * Description   : Reverse current output logic of individual GPIO pin.
+ *
+ *END**************************************************************************/
+void GPIO_TogglePinOutput(uint32_t pinName)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    GPIO_Hal_TogglePinOutput(gpioBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_ReadPinInput
+ * Description   : Read current input value of individual GPIO pin.
+ *
+ *END**************************************************************************/
+uint32_t GPIO_ReadPinInput(uint32_t pinName)
+{
+    GPIO_Type * gpioBase = g_gpioBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    return GPIO_Hal_ReadPinInput(gpioBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_IsPinIntPending
+ * Description   : Read the individual pin-interrupt status flag.
+ *
+ *END**************************************************************************/
+uint32_t GPIO_IsPinIntPending(uint32_t pinName)
+{
+    PORT_Type * portBase = g_portBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    return PORT_Hal_IsPinIntPending(portBase, pin);
+}
+
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : GPIO_ClearPinIntFlag
+ * Description   : Clear individual GPIO pin interrupt status flag.
+ *
+ *END**************************************************************************/
+void GPIO_ClearPinIntFlag(uint32_t pinName)
+{
+    PORT_Type * portBase = g_portBase[GPIO_EXTRACT_PORT(pinName)];
+    uint32_t pin = GPIO_EXTRACT_PIN(pinName);
+
+    PORT_Hal_ClearPinIntFlag(portBase, pin);
+}
+
+/*******************************************************************************
+ * EOF
+ ******************************************************************************/
+

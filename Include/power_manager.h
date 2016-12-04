@@ -33,14 +33,14 @@ typedef enum power_manager_policy
 	powerManagerPolicyForcible
 }power_manager_policy_t;
 
-typedef power_manager_notify
+typedef enum power_manager_notify
 {
-	powerManagerNotifyRecover = 0x00U;
+	powerManagerNotifyRecover = 0x00U,
 	powerManagerNotifyBefore = 0x01U,
 	powerManagerNotifyAfter = 0x02U
 }power_manager_notify_t;
 
-typedef power_manager_callback_type
+typedef enum power_manager_callback_type
 {
 	powerManagerCallBackBefore = 0x01U,
 	powerManagerCallBackAfter = 0x02U,
@@ -94,14 +94,15 @@ power_manager_error_code_t system_PowerManagerInit(power_manager_mode_user_confi
 												   power_manager_callback_user_config_t **callbackPtr,
 												   uint8_t callbackNumber);
 
-power_manager_error_code_t system_PowerManagerDeInit(void);
-
 power_manager_error_code_t system_PowerManagerSetMode(uint8_t powerModeIndex, 
 													  power_manager_policy_t policy);
 						
-power_manager_error_code_t system_PowerMangerGetLastMode(uint8_t *powerModeIndexPtr);
+power_manager_mode_t POWER_SYS_GetCurrentPowerMode(void);
 
-power_manager_error_code_t POWER_SYS_GetLastModeConfig(power_manager_user_config_t const ** powerModePtr);
+__STATIC_INLINE uint8_t pmc_Hal_GetRegulatorStatus(void)
+{
+    return (PMC_REGSC & PMC_REGSC_REGONS_MASK);
+}
 
 
 #if defined(__cplusplus)

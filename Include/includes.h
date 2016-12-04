@@ -22,6 +22,7 @@ extern "C" {
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 
 /*********************************************************************************************************
   Common header files   
@@ -32,10 +33,15 @@ extern "C" {
 /*********************************************************************************************************
   Driver header files  
 *********************************************************************************************************/
+#include "system.h"
 #include "gpio.h"
 #include "adc16_hal.h"
 #include "adc_driver.h"
 #include "adc.h"
+#include "tsi_hal.h"
+#include "tsi.h"
+#include "smc_hal.h"
+//#include "power_manager.h"
 
 /*********************************************************************************************************
   User's header files 
@@ -45,6 +51,12 @@ extern "C" {
   Macro 
 *********************************************************************************************************/
 
+#define TSI_HIGHTHRESHOLD	(100U)
+#define TSI_LOWTHRESHOLD	(200U)
+#define BOARD_TSI_ELECTRODE_CNT		(2U)
+#define BOARD_TSI_ELECTRODE_1       (9U)
+#define BOARD_TSI_ELECTRODE_2       (10U)
+#define TSI_THRESHOLD_SAMPLING      (100U)
 #ifdef __cplusplus
 }
 #endif
