@@ -1,5 +1,5 @@
 
-#include "inlcudes.h"
+#include "includes.h"
 
 
 /*******************************************************************************
@@ -45,8 +45,6 @@ void GPIO_Hal_WritePinOutput(GPIO_Type * base, uint32_t pin, bool output)
     }
 }
 
-#if FSL_FEATURE_GPIO_HAS_FAST_GPIO
-
 /*FUNCTION**********************************************************************
  *
  * Function Name : FGPIO_Hal_SetPinDir
@@ -55,7 +53,7 @@ void GPIO_Hal_WritePinOutput(GPIO_Type * base, uint32_t pin, bool output)
  *END**************************************************************************/
 void FGPIO_Hal_SetPinDir(FGPIO_Type * base, uint32_t pin, gpio_pin_direction_t direction)
 {
-    if (direction == kGpioDigitalOutput)
+    if (direction == gpioDigitalOutput)
     {
         FGPIO_PDDR_REG(base) |= (1U << pin);
     }
@@ -82,10 +80,6 @@ void FGPIO_Hal_WritePinOutput(FGPIO_Type * base, uint32_t pin, bool output)
         FGPIO_PCOR_REG(base) |= (1U << pin); /* Set pin output to low level.*/
     }
 }
-
-#endif
-
-#endif /* FSL_FEATURE_SOC_GPIO_COUNT */
 /*******************************************************************************
  * EOF
  ******************************************************************************/

@@ -2,13 +2,7 @@
 
 void task_Init(void)
 {
-	/* Enable the clock gate to ALL the Port module */
-	PORT_ENABLE_CLK(A);		
-	PORT_ENABLE_CLK(B);
-	PORT_ENABLE_CLK(C);
-	PORT_ENABLE_CLK(D);
-	PORT_ENABLE_CLK(E);
-	
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	/* Configure low power setting */
 	//const power_manager_user_config_t VLPRConfig = {.mode = powerManagerWait,
 	//												.sleepOnExit = false};
@@ -16,14 +10,23 @@ void task_Init(void)
 	//power_manager_user_config_t const *powerConfig[] = {
 	//	&WaitConfig
 	//};
-	
+	PORT_Hal_SetMuxMode(PORTB,16u,portPinDisabled);
+	PORT_Hal_SetMuxMode(PORTB,17u,portPinDisabled);
 	/* Enable system interrupt */
 	__enable_irq();
 	//app_ADCInit();
 }
 
 int main(void){
-	int32_t temp;
+	lptmr_state_t lptmrState;
+	lptmr_user_config_t lptmrUserConfig =
+    {
+        .timerMode            = lptmrTimerModeTimeCounter, /*! Use LPTMR in Time Counter mode */
+        .freeRunningEnable    = true, /*! When hit compare value, set counter back to zero */
+        .prescalerEnable      = false, /*! bypass prescaler */
+        .prescalerClockSource = clockLptmrSrcLpoClk, /*! use 1kHz Low Power Clock */
+        .isInterruptEnabled   = false
+    };
 	
 	uint16_t tsi_MeasureResult[BOARD_TSI_ELECTRODE_CNT];
 	uint8_t tsi_Channel[BOARD_TSI_ELECTRODE_CNT];
@@ -33,7 +36,8 @@ int main(void){
 	tsi_status_t tsi_Status;
 	
 	task_Init();
-	
+	LPTMR_Init(&lptmrState, &lptmrUserConfig);
+	LPTMR_Start();
 	static const tsi_config_t tsiHwConfig =
 	{
 		.ps 							= TSIElecOscPrescaler_2div,
@@ -57,7 +61,8 @@ int main(void){
 	
 	tsi_Channel[0] = BOARD_TSI_ELECTRODE_1;
 	tsi_Channel[1] = BOARD_TSI_ELECTRODE_2; //might want to improve
-	
+	LED1_SELECT;
+	LED1_EN;
 	tsi_Status = TSI_Init(&myTSIState, &tsi_Config);
 	if(tsi_Status != status_TSI_Success)
 	{
@@ -93,8 +98,6 @@ int main(void){
 	
 	
 	while (1){
-		//temp = read_OnChipTemperature();
-		//temp = temp;
 		tsi_Status = TSI_MeasureBlocking();
 		if(tsi_Status != status_TSI_Success)
 		{
@@ -113,14 +116,12 @@ int main(void){
 		avg_Measure /= BOARD_TSI_ELECTRODE_CNT;
 		if(avg_Measure > avg_Untouch + 10)
 		{ 
-			 temp =100;
-			temp=temp;
+				LED1_ON;
 		}
 		else
 		{
-				temp = 0;
-			temp=temp;
+				LED1_OFF;
 		}
-		
+		SYS_TimeDelay(100);
 	}
 }

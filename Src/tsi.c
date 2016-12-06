@@ -18,7 +18,7 @@ tsi_status_t TSI_Init(tsi_state_t *tsiState, const tsi_user_config_t *tsiUserCon
 	memset(tsiSt, 0, sizeof(tsi_state_t));
 	SYS_MutexCreate(&tsiSt->lock);
 	SYS_MutexCreate(&tsiSt->lockChangeMode);
-	if(status_SYS_Success != SYS_MutexLock(&tsiSt->lock))
+	if(status_SYS_Success != SYS_MutexLock(&tsiSt->lock, SYS_WAIT_FOREVER))
 	{
 		SYS_ExitCritical(); 
 		return status_TSI_Error;
@@ -30,9 +30,9 @@ tsi_status_t TSI_Init(tsi_state_t *tsiState, const tsi_user_config_t *tsiUserCon
 	tsiSt->usrData = tsiUserConfig->usrData;
 	tsiSt->isBlockingMeasure = false;
 	
-	TSI_Hal_EnableClock(); //????
+	TSI_Hal_EnableClock(); 
 	
-	SYS_SemaphoreCreate(&tsiSt->irqSync, 0); //????
+	SYS_SemaphoreCreate(&tsiSt->irqSync, 0); 
 	
 	TSI_Hal_Init();
 	TSI_Hal_SetConfiguration(&tsiSt->opModeData[tsiSt->operationMode].config);
@@ -70,7 +70,7 @@ tsi_status_t TSI_DeInit(void)
  tsi_status_t TSI_SetCallbackFunc(const tsi_callback_t pCallback, void *usrData)
  {
 	 tsi_state_t *tsiState = tsiStatePtr;
-	 if(status_SYS_Success != SYS_MutexLock(&tsiState->lock))
+	 if(status_SYS_Success != SYS_MutexLock(&tsiState->lock, SYS_WAIT_FOREVER))
 	 {
 		 return status_TSI_Error;
 	 }
@@ -89,7 +89,7 @@ tsi_status_t TSI_Measure(void)
 {
 	tsi_state_t *tsiState = tsiStatePtr;
 	uint32_t first_pen, pen;
-	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock))
+	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock, SYS_WAIT_FOREVER))
 	{
 		 return status_TSI_Error;
 	}
@@ -131,8 +131,7 @@ tsi_status_t TSI_MeasureBlocking(void)
 	tsiState->isBlockingMeasure = true;
 	do
 	{
-		syncStatus = status_SYS_Success;
-		//syncStatus = SYS_SemaWait(&tsiState->irqSync, 1000); //?????
+		syncStatus = SYS_SemaWait(&tsiState->irqSync, 1000); //?????
 	}while(syncStatus == status_SYS_Idle);
 	if (syncStatus != status_SYS_Success)
 	{
@@ -146,7 +145,7 @@ tsi_status_t TSI_AbortMeasure(void)
 {
 	tsi_status_t tsiStatus = status_TSI_Success;
 	tsi_state_t *tsiState = tsiStatePtr;
-	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock))
+	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock, SYS_WAIT_FOREVER))
 	{
 		return status_TSI_Error;
 	}
@@ -180,7 +179,7 @@ tsi_status_t TSI_EnableElectrode(const uint32_t channel, const bool enable)
 	tsi_state_t *tsiState = tsiStatePtr;
 	assert(channel < MAX_TSI_CHANNEL_INDEX);
 	
-	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock))
+	if(status_SYS_Success != SYS_MutexLock(&tsiState->lock, SYS_WAIT_FOREVER))
 	{
 		return status_TSI_Error;
 	}
@@ -254,6 +253,10 @@ void TSI0_IRQHandler(void)
 		SYS_SemaPost(&tsiState->irqSync); //???
 		tsiState->isBlockingMeasure = false;
 	}
+	else if(tsiState->pCallbackFunc)
+  {
+		tsiState->pCallbackFunc(tsiState->usrData);
+  }
 	if(tsiState->status != status_TSI_Lowpower)
 	{
 		tsiState->status = status_TSI_Initialized;

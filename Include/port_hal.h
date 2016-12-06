@@ -28,22 +28,23 @@
  * Definitions
  ******************************************************************************/
 /*! @brief Internal resistor pull feature selection*/
+
 typedef enum port_pull {
     portPullDown = 0U,  /*!< Internal pull-down resistor is enabled. @internal gui name="Down"*/
     portPullUp   = 1U   /*!< Internal pull-up resistor is enabled. @internal gui name="Up"*/
-} port_pull_t;
+}port_pull_t;
 
 /*! @brief Slew rate selection*/
 typedef enum port_slew_rate {
     portFastSlewRate = 0U,  /*!< Fast slew rate is configured. @internal gui name="Fast"*/
     portSlowSlewRate = 1U   /*!< Slow slew rate is configured. @internal gui name="Slow" */
-} port_slew_rate_t;
+}port_slew_rate_t;
 
 /*! @brief Configures the drive strength.*/
 typedef enum port_drive_strength {
     portLowDriveStrength  = 0U, /*!< Low drive strength is configured. @internal gui name="Low"*/
     portHighDriveStrength = 1U  /*!< High drive strength is configured. @internal gui name="High"*/
-} port_drive_strength_t;
+}port_drive_strength_t;
 
 /*! @brief Pin mux selection*/
 typedef enum port_mux {
@@ -55,7 +56,7 @@ typedef enum port_mux {
     portMuxAlt5     = 5U,   /*!< Chip-specific*/
     portMuxAlt6     = 6U,   /*!< Chip-specific*/
     portMuxAlt7     = 7U    /*!< Chip-specific*/
-} port_mux_t;
+}port_mux_t;
 
 /*! @brief Configures the interrupt generation condition.*/
 typedef enum _port_interrupt_config {
@@ -68,7 +69,7 @@ typedef enum _port_interrupt_config {
     portIntFallingEdge = 0xAU,  /*!< Interrupt on falling edge. */
     portIntEitherEdge  = 0xBU,  /*!< Interrupt on either edge. */
     portIntLogicOne    = 0xCU   /*!< Interrupt when logic one. */
-} port_interrupt_config_t;
+}port_interrupt_config_t;
 
 /*******************************************************************************
  * API

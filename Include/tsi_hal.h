@@ -210,7 +210,7 @@ __STATIC_INLINE uint32_t TSI_Hal_IsCurrentSourcePairSwapped(void)
 
 __STATIC_INLINE uint32_t TSI_Hal_GetMeasuredChannelNumber(void)
 {
-	return (TSI0_DATA & TSI_DATA_TSICH_MASK);
+	return (uint32_t)((TSI0_DATA & TSI_DATA_TSICH_MASK) >> TSI_DATA_TSICH_SHIFT);
 }
 
 __STATIC_INLINE uint32_t TSI_Hal_IsDmaTransferEnable(void)
@@ -349,7 +349,8 @@ __STATIC_INLINE void TSI_Hal_SetNumberOfScan(tsi_scan_time_t nscan)
 __STATIC_INLINE void TSI_Hal_SetMeasureChannelNumber(uint32_t channel)
 {
 	assert(channel < MAX_TSI_CHANNEL_INDEX);
-	TSI0_DATA  |= TSI_DATA_TSICNT(channel);
+	TSI0_DATA  &= 0x0FFFFFFF;
+	TSI0_DATA  |= TSI_DATA_TSICH(channel);
 }
 
 __STATIC_INLINE void TSI_Hal_DmaTransferEnable(void)

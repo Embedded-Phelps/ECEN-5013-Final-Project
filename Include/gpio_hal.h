@@ -2,30 +2,12 @@
 #ifndef __GPIO_HAL_H__
 #define __GPIO_HAL_H__
  
-#include <includes.h>
+#include "includes.h"
  
-/*!
- * @addtogroup gpio_hal
- * @{
- */
-
-/*!
- * @file gpio_hal.h
- *
- * @brief GPIO hardware driver configuration. Use these functions to set the GPIO input/output, 
- * set output logic or get input logic. Check the GPIO header file for base pointer. Each 
- * GPIO instance has 32 pins with numbers from 0 to 31.
- */
-
-/*******************************************************************************
- * Definitions
- ******************************************************************************/
-
-/*! @brief GPIO direction definition*/
 typedef enum gpio_pin_direction {
     gpioDigitalInput  = 0U, /*!< Set current pin as digital input*/
     gpioDigitalOutput = 1U  /*!< Set current pin as digital output*/
-} gpio_pin_direction_t;
+}gpio_pin_direction_t;
 
 /*******************************************************************************
  * API
@@ -88,7 +70,7 @@ __STATIC_INLINE void GPIO_Hal_SetPortDir(GPIO_Type * base, uint32_t pinDirection
 __STATIC_INLINE gpio_pin_direction_t GPIO_Hal_GetPinDir(GPIO_Type * base, uint32_t pin)
 {
     assert(pin < 32);
-    return (gpio_pin_direction_t)(GPIO_PDDR_REG(base) >> pin) & 1U);
+    return (gpio_pin_direction_t)((GPIO_PDDR_REG(base) >> pin) & 1U);
 } 
 
 /*!
@@ -105,7 +87,7 @@ __STATIC_INLINE gpio_pin_direction_t GPIO_Hal_GetPinDir(GPIO_Type * base, uint32
  */
 __STATIC_INLINE uint32_t GPIO_Hal_GetPortDir(GPIO_Type * base)
 {
-    return GPIO_PDDR_REG(base)
+    return GPIO_PDDR_REG(base);
 } 
 
 /* @} */
@@ -122,7 +104,7 @@ __STATIC_INLINE uint32_t GPIO_Hal_GetPortDir(GPIO_Type * base)
  * @param pin  GPIO port pin number
  * @param output  pin output logic level
  */
-void GPIO_Hal_WritePinOutput(GPIO_Type * base, uint32_t pin, uint32_t output);
+void GPIO_Hal_WritePinOutput(GPIO_Type * base, uint32_t pin, bool output);
 
 /*!
  * @brief Reads the current pin output.
@@ -308,8 +290,6 @@ __STATIC_INLINE uint32_t GPIO_Hal_ReadPortInput(GPIO_Type * base)
  * @{
  */
 
-#if BOARD_GPIO_HAS_FAST_GPIO
-
 /*!
  * @name Configuration
  * @{
@@ -396,7 +376,7 @@ __STATIC_INLINE uint32_t FGPIO_Hal_GetPortDir(FGPIO_Type * base)
  * @param pin  FGPIO port pin number
  * @param output  pin output logic level
  */
-void FGPIO_Hal_WritePinOutput(FGPIO_Type * base, uint32_t pin, uint32_t output);
+void FGPIO_Hal_WritePinOutput(FGPIO_Type * base, uint32_t pin, bool output);
 
 /*!
  * @brief Reads the current FGPIOpin output.
@@ -420,7 +400,7 @@ __STATIC_INLINE uint32_t FGPIO_Hal_ReadPinOutput(FGPIO_Type * base, uint32_t pin
 __STATIC_INLINE void FGPIO_Hal_SetPinOutput(FGPIO_Type * base, uint32_t pin)
 {
     assert(pin < 32);
-    FGPIO_PSOR_REG(base) |= 1U << pin);
+    FGPIO_PSOR_REG(base) |= (1U << pin);
 }
 
 /*!
@@ -432,7 +412,7 @@ __STATIC_INLINE void FGPIO_Hal_SetPinOutput(FGPIO_Type * base, uint32_t pin)
 __STATIC_INLINE void FGPIO_Hal_ClearPinOutput(FGPIO_Type * base, uint32_t pin)
 {
     assert(pin < 32);
-    FGPIO_PCOR_REG(base) |= 1U << pin;
+    FGPIO_PCOR_REG(base) |= (1U << pin);
 }
 
 /*!
@@ -444,7 +424,7 @@ __STATIC_INLINE void FGPIO_Hal_ClearPinOutput(FGPIO_Type * base, uint32_t pin)
 __STATIC_INLINE void FGPIO_Hal_TogglePinOutput(FGPIO_Type * base, uint32_t pin)
 {
     assert(pin < 32);
-    FGPIO_PTOR_REG(base) |= 1U << pin);
+    FGPIO_PTOR_REG(base) |= (1U << pin);
 }
 
 /*!
@@ -572,8 +552,6 @@ __STATIC_INLINE uint32_t FGPIO_Hal_ReadPortInput(FGPIO_Type * base)
 }
 
 /* @} */
-
-#endif /* BOARD_GPIO_HAS_FAST_GPIO*/
 
 #if defined(__cplusplus)
 }

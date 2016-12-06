@@ -10,10 +10,6 @@
 #ifndef  __INCLUDES_H
 #define  __INCLUDES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 /*********************************************************************************************************
   Standard header files 
@@ -35,12 +31,16 @@ extern "C" {
 *********************************************************************************************************/
 #include "system.h"
 #include "gpio.h"
-#include "adc16_hal.h"
-#include "adc_driver.h"
-#include "adc.h"
-#include "tsi_hal.h"
+#include "gpio_hal.h"
+#include "port_hal.h"
+#include "system.h"
+#include "lptmr_hal.h"
+#include "lptmr_driver.h"
+#include "board.h"
+#include "clock.h"
 #include "tsi.h"
-#include "smc_hal.h"
+#include "tsi_hal.h"
+
 //#include "power_manager.h"
 
 /*********************************************************************************************************
@@ -53,13 +53,7 @@ extern "C" {
 
 #define TSI_HIGHTHRESHOLD	(100U)
 #define TSI_LOWTHRESHOLD	(200U)
-#define BOARD_TSI_ELECTRODE_CNT		(2U)
-#define BOARD_TSI_ELECTRODE_1       (9U)
-#define BOARD_TSI_ELECTRODE_2       (10U)
 #define TSI_THRESHOLD_SAMPLING      (100U)
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

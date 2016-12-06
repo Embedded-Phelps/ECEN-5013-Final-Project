@@ -39,6 +39,9 @@ typedef struct MsgQueue
 
 typedef msg_queue_t*	msg_queue_handler_t;
 
+#define SYS_WAIT_FOREVER  0xFFFFFFFFU
+#define SYS_TIME_RANGE 0xFFFFU
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -51,7 +54,7 @@ void SYS_ExitCritical(void);
 
 system_status_t SYS_MutexCreate(mutex_t *pMutex);
 
-system_status_t SYS_MutexLock(mutex_t *pMutex);
+system_status_t SYS_MutexLock(mutex_t *pMutex, uint32_t timeout);
 
 system_status_t SYS_MutexUnlock(mutex_t *pMutex);
 
@@ -73,6 +76,11 @@ system_status_t SYS_MsgEnqueue(msg_queue_handler_t handler, void* pMsg);
 
 system_status_t SYS_MsgDequeue(msg_queue_handler_t handler, void* pMsg);
 
+uint32_t SYS_TimeDiff(uint32_t time_start, uint32_t time_end);
+
+uint32_t SYS_TimeGetMsec(void);
+
+void SYS_TimeDelay(uint32_t delay);
 
 __STATIC_INLINE void SYS_DisableIRQGlobal(void)
 {

@@ -15,19 +15,19 @@ void LPTMR_Hal_Init(void)
     LPTMR_Hal_Disable();
     LPTMR_Hal_ClearIntFlag();
 
-    working_mode_config.timerModeSelect = kLptmrTimerModeTimeCounter;
+    working_mode_config.timerModeSelect = lptmrTimerModeTimeCounter;
     working_mode_config.freeRunningEnable = false;
-    working_mode_config.pinPolarity = kLptmrPinPolarityActiveHigh;
-    working_mode_config.pinSelect = kLptmrPinSelectInput0;
+    working_mode_config.pinPolarity = lptmrPinPolarityActiveHigh;
+    working_mode_config.pinSelect = lptmrPinSelectInput0;
     LPTMR_Hal_SetTimerWorkingMode(working_mode_config);
     
-    prescaler_config.prescalerValue = kLptmrPrescalerDivide2;
+    prescaler_config.prescalerValue = lptmrPrescalerDivide2;
     prescaler_config.prescalerBypass = true;
-    prescaler_config.prescalerClockSelect = kLptmrPrescalerClock0;
+    prescaler_config.prescalerClockSelect = lptmrPrescalerClock0;
     LPTMR_Hal_SetPrescalerMode(prescaler_config);
     
     LPTMR_Hal_SetCompareValue(0U);
-    LPTMR_HAL_SetIntCmd(false);
+    LPTMR_Hal_SetIntCmd(false);
 }
 
  /*FUNCTION**********************************************************************
@@ -53,11 +53,11 @@ void LPTMR_Hal_SetTimerWorkingMode(lptmr_working_mode_user_config_t timerMode)
 
  /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_HAL_SetPrescalerMode
+ * Function Name : LPTMR_Hal_SetPrescalerMode
  * Description   : Set the LPTMR prescaler mode.
  *
  *END**************************************************************************/
-void LPTMR_HAL_SetPrescalerMode(lptmr_prescaler_user_config_t prescaler_config)
+void LPTMR_Hal_SetPrescalerMode(lptmr_prescaler_user_config_t prescaler_config)
 {
     uint32_t psr;
     

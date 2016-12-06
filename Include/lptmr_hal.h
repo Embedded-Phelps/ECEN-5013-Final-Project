@@ -16,50 +16,50 @@
 
 /*! @brief LPTMR pin selection, used in pulse counter mode.*/
 typedef enum _lptmr_pin_select {
-    kLptmrPinSelectInput0 = 0x0U, /*!< Pulse counter input 0 is selected. @internal gui name="Input0"*/
-    kLptmrPinSelectInput1 = 0x1U, /*!< Pulse counter input 1 is selected. @internal gui name="Input1"*/
-    kLptmrPinSelectInput2 = 0x2U, /*!< Pulse counter input 2 is selected. @internal gui name="Input2"*/
-    kLptmrPinSelectInput3 = 0x3U  /*!< Pulse counter input 3 is selected. @internal gui name="Input3"*/
+    lptmrPinSelectInput0 = 0x0U, /*!< Pulse counter input 0 is selected. @internal gui name="Input0"*/
+    lptmrPinSelectInput1 = 0x1U, /*!< Pulse counter input 1 is selected. @internal gui name="Input1"*/
+    lptmrPinSelectInput2 = 0x2U, /*!< Pulse counter input 2 is selected. @internal gui name="Input2"*/
+    lptmrPinSelectInput3 = 0x3U  /*!< Pulse counter input 3 is selected. @internal gui name="Input3"*/
 } lptmr_pin_select_t;
 
 /*! @brief LPTMR pin polarity, used in pulse counter mode.*/
 typedef enum _lptmr_pin_polarity {
-    kLptmrPinPolarityActiveHigh = 0x0U, /*!< Pulse Counter input source is active-high. @internal gui name="Active-high"*/
-    kLptmrPinPolarityActiveLow  = 0x1U  /*!< Pulse Counter input source is active-low. @internal gui name="Active-low"*/
+    lptmrPinPolarityActiveHigh = 0x0U, /*!< Pulse Counter input source is active-high. @internal gui name="Active-high"*/
+    lptmrPinPolarityActiveLow  = 0x1U  /*!< Pulse Counter input source is active-low. @internal gui name="Active-low"*/
 } lptmr_pin_polarity_t;
 
 /*! @brief LPTMR timer mode selection.*/
 typedef enum _lptmr_timer_mode {
-    kLptmrTimerModeTimeCounter  = 0x0U, /*!< Time Counter mode. @internal gui name="Time Counter mode"*/
-    kLptmrTimerModePulseCounter = 0x1U  /*!< Pulse Counter mode. @internal gui name="Pulse Counter mode"*/
+    lptmrTimerModeTimeCounter  = 0x0U, /*!< Time Counter mode. @internal gui name="Time Counter mode"*/
+    lptmrTimerModePulseCounter = 0x1U  /*!< Pulse Counter mode. @internal gui name="Pulse Counter mode"*/
 } lptmr_timer_mode_t;
 
 /*! @brief LPTMR prescaler value.*/
 typedef enum _lptmr_prescaler_value {
-    kLptmrPrescalerDivide2                      = 0x0U, /*!< Prescaler divide 2, glitch filter invalid. @internal gui name="2/invalid"*/
-    kLptmrPrescalerDivide4GlitchFilter2         = 0x1U, /*!< Prescaler divide 4, glitch filter 2. @internal gui name="4/2"*/
-    kLptmrPrescalerDivide8GlitchFilter4         = 0x2U, /*!< Prescaler divide 8, glitch filter 4. @internal gui name="8/4"*/
-    kLptmrPrescalerDivide16GlitchFilter8        = 0x3U, /*!< Prescaler divide 16, glitch filter 8. @internal gui name="16/8"*/
-    kLptmrPrescalerDivide32GlitchFilter16       = 0x4U, /*!< Prescaler divide 32, glitch filter 16. @internal gui name="32/16"*/
-    kLptmrPrescalerDivide64GlitchFilter32       = 0x5U, /*!< Prescaler divide 64, glitch filter 32. @internal gui name="64/32"*/
-    kLptmrPrescalerDivide128GlitchFilter64      = 0x6U, /*!< Prescaler divide 128, glitch filter 64. @internal gui name="128/64"*/
-    kLptmrPrescalerDivide256GlitchFilter128     = 0x7U, /*!< Prescaler divide 256, glitch filter 128. @internal gui name="256/128"*/
-    kLptmrPrescalerDivide512GlitchFilter256     = 0x8U, /*!< Prescaler divide 512, glitch filter 256. @internal gui name="512/256"*/
-    kLptmrPrescalerDivide1024GlitchFilter512    = 0x9U, /*!< Prescaler divide 1024, glitch filter 512. @internal gui name="1024/512"*/
-    kLptmrPrescalerDivide2048GlitchFilter1024   = 0xAU, /*!< Prescaler divide 2048 glitch filter 1024. @internal gui name="2048/1024"*/
-    kLptmrPrescalerDivide4096GlitchFilter2048   = 0xBU, /*!< Prescaler divide 4096, glitch filter 2048.@internal gui name="4096/2048"*/
-    kLptmrPrescalerDivide8192GlitchFilter4096   = 0xCU, /*!< Prescaler divide 8192, glitch filter 4096. @internal gui name="8192/4096"*/
-    kLptmrPrescalerDivide16384GlitchFilter8192  = 0xDU, /*!< Prescaler divide 16384, glitch filter 8192. @internal gui name="16384/8192"*/
-    kLptmrPrescalerDivide32768GlitchFilter16384 = 0xEU, /*!< Prescaler divide 32768, glitch filter 16384. @internal gui name="32768/16384"*/
-    kLptmrPrescalerDivide65536GlitchFilter32768 = 0xFU  /*!< Prescaler divide 65536, glitch filter 32768. @internal gui name="65535/32768"*/
+    lptmrPrescalerDivide2                      = 0x0U, /*!< Prescaler divide 2, glitch filter invalid. @internal gui name="2/invalid"*/
+    lptmrPrescalerDivide4GlitchFilter2         = 0x1U, /*!< Prescaler divide 4, glitch filter 2. @internal gui name="4/2"*/
+    lptmrPrescalerDivide8GlitchFilter4         = 0x2U, /*!< Prescaler divide 8, glitch filter 4. @internal gui name="8/4"*/
+    lptmrPrescalerDivide16GlitchFilter8        = 0x3U, /*!< Prescaler divide 16, glitch filter 8. @internal gui name="16/8"*/
+    lptmrPrescalerDivide32GlitchFilter16       = 0x4U, /*!< Prescaler divide 32, glitch filter 16. @internal gui name="32/16"*/
+    lptmrPrescalerDivide64GlitchFilter32       = 0x5U, /*!< Prescaler divide 64, glitch filter 32. @internal gui name="64/32"*/
+    lptmrPrescalerDivide128GlitchFilter64      = 0x6U, /*!< Prescaler divide 128, glitch filter 64. @internal gui name="128/64"*/
+    lptmrPrescalerDivide256GlitchFilter128     = 0x7U, /*!< Prescaler divide 256, glitch filter 128. @internal gui name="256/128"*/
+    lptmrPrescalerDivide512GlitchFilter256     = 0x8U, /*!< Prescaler divide 512, glitch filter 256. @internal gui name="512/256"*/
+    lptmrPrescalerDivide1024GlitchFilter512    = 0x9U, /*!< Prescaler divide 1024, glitch filter 512. @internal gui name="1024/512"*/
+    lptmrPrescalerDivide2048GlitchFilter1024   = 0xAU, /*!< Prescaler divide 2048 glitch filter 1024. @internal gui name="2048/1024"*/
+    lptmrPrescalerDivide4096GlitchFilter2048   = 0xBU, /*!< Prescaler divide 4096, glitch filter 2048.@internal gui name="4096/2048"*/
+    lptmrPrescalerDivide8192GlitchFilter4096   = 0xCU, /*!< Prescaler divide 8192, glitch filter 4096. @internal gui name="8192/4096"*/
+    lptmrPrescalerDivide16384GlitchFilter8192  = 0xDU, /*!< Prescaler divide 16384, glitch filter 8192. @internal gui name="16384/8192"*/
+    lptmrPrescalerDivide32768GlitchFilter16384 = 0xEU, /*!< Prescaler divide 32768, glitch filter 16384. @internal gui name="32768/16384"*/
+    lptmrPrescalerDivide65536GlitchFilter32768 = 0xFU  /*!< Prescaler divide 65536, glitch filter 32768. @internal gui name="65535/32768"*/
 } lptmr_prescaler_value_t;
 
 /*! @brief LPTMR prescaler/glitch filter clock select. */
 typedef enum _lptmr_prescaler_clock_select{
-    kLptmrPrescalerClock0 = 0x0U, /*!< Prescaler/glitch filter clock 0 selected. */
-    kLptmrPrescalerClock1 = 0x1U, /*!< Prescaler/glitch filter clock 1 selected. */
-    kLptmrPrescalerClock2 = 0x2U, /*!< Prescaler/glitch filter clock 2 selected. */
-    kLptmrPrescalerClock3 = 0x3U, /*!< Prescaler/glitch filter clock 3 selected. */
+    lptmrPrescalerClock0 = 0x0U, /*!< Prescaler/glitch filter clock 0 selected. */
+    lptmrPrescalerClock1 = 0x1U, /*!< Prescaler/glitch filter clock 1 selected. */
+    lptmrPrescalerClock2 = 0x2U, /*!< Prescaler/glitch filter clock 2 selected. */
+    lptmrPrescalerClock3 = 0x3U, /*!< Prescaler/glitch filter clock 3 selected. */
 } lptmr_prescaler_clock_select_t;
 
 /*! @brief LPTMR status return codes.*/
@@ -114,30 +114,30 @@ extern "C" {
  */
 __STATIC_INLINE void LPTMR_Hal_Enable(void)
 {
-    LPTMR0_CSR |= LPTMR0_CSR_TENA_MASK;
+    LPTMR0_CSR |= LPTMR_CSR_TEN_MASK;
 }
 
 /*!
  * @brief Disables the LPTMR module operation.
  */
-__STATIC_INLINE void LPTMR_Hal_Disable()
+__STATIC_INLINE void LPTMR_Hal_Disable(void)
 {
-    LPTMR0_CSR &= ~LPTMR0_CSR_TENA_MASK;
+    LPTMR0_CSR &= ~LPTMR_CSR_TEN_MASK;
 }
 
 __STATIC_INLINE void LPTMR_Hal_EnableClock()
 {
-    SIM_SCGC5 |= SIM_SCGC5_LPTMR;
+    SIM_SCGC5 |= SIM_SCGC5_LPTMR_MASK;
 }
 
 __STATIC_INLINE void LPTMR_Hal_DisableClock()
 {
-    SIM_SCGC5 &= ~SIM_SCGC5_LPTMR;
+    SIM_SCGC5 &= ~SIM_SCGC5_LPTMR_MASK;
 }
 
 __STATIC_INLINE bool LPTMR_Hal_isClockEnabled()
 {
-    return (bool)(SIM_SCGC5 & SIM_SCGC5_LPTMR);
+    return (bool)(SIM_SCGC5 & SIM_SCGC5_LPTMR_MASK);
 }
 
 __STATIC_INLINE void LPTMR_Hal_EnableNVICInterrupt(void)
@@ -157,7 +157,7 @@ __STATIC_INLINE void LPTMR_Hal_DisableNVICInterrupt(void)
  */
 __STATIC_INLINE void LPTMR_Hal_ClearIntFlag(void)
 {
-    LPTMR0_CSR |= LPTMR0_CSR_TCF_MASK;
+    LPTMR0_CSR |= LPTMR_CSR_TCF_MASK;
 }
 
 /*!
@@ -169,7 +169,7 @@ __STATIC_INLINE void LPTMR_Hal_ClearIntFlag(void)
  */
 __STATIC_INLINE bool LPTMR_Hal_IsIntPending(void)
 {
-    return ((bool)(LPTMR0_CSR & LPTMR0_CSR_TCF_MASK);
+    return (bool)(LPTMR0_CSR & LPTMR_CSR_TCF_MASK);
 }
 
 /*!
@@ -179,7 +179,7 @@ __STATIC_INLINE bool LPTMR_Hal_IsIntPending(void)
  */
 __STATIC_INLINE void LPTMR_Hal_SetIntCmd(bool enable)
 {
-    LPTMR0_CSR |= LPTMR0_CSR_TIE_MASK;
+    LPTMR0_CSR |= LPTMR_CSR_TIE_MASK;
 }
 
 /*!

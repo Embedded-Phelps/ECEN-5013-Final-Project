@@ -22,8 +22,9 @@ system_status_t SYS_MutexCreate(mutex_t *pMutex)
     return status_SYS_Success;
 }
 
-system_status_t SYS_MutexLock(mutex_t *pMutex)
+system_status_t SYS_MutexLock(mutex_t *pMutex, uint32_t timeout)
 {
+		uint32_t currentTime;
 		assert(pMutex);
 
     /* Always check first. Deal with timeout only if not available. */
@@ -38,8 +39,31 @@ system_status_t SYS_MutexLock(mutex_t *pMutex)
     }
     else
     {
+			if(0 == timeout)
+			{
+				return status_SYS_Timeout;
+			}
+			else if(pMutex->isWaiting)
+			{
+				currentTime = SYS_TimeGetMsec();
+				if(pMutex->timeout < SYS_TimeDiff(pMutex->time_start, currentTime))
+				{
+					SYS_DisableIRQGlobal();
+					pMutex->isWaiting = false;
+					SYS_EnableIRQGlobal();
+					return status_SYS_Timeout;
+				}
+			}
+			else if(timeout != SYS_WAIT_FOREVER)
+			{
+				SYS_DisableIRQGlobal();
+				pMutex->isWaiting = true;
+				SYS_EnableIRQGlobal();
+				pMutex->time_start = SYS_TimeGetMsec();
+				pMutex->timeout =timeout;
+			}
+		}
 		return status_SYS_Idle;
-	}
 }
 
 system_status_t SYS_MutexUnlock(mutex_t *pMutex)
@@ -67,6 +91,7 @@ system_status_t SYS_SemaphoreCreate(semaphore_t *pSem, uint8_t initValue)
 
 system_status_t SYS_SemaWait(semaphore_t *pSem, uint32_t timeout)
 {
+		uint32_t currentTime;
     assert(pSem);
 
     /* Check the sem count first. Deal with timeout only if not already set */
@@ -85,8 +110,26 @@ system_status_t SYS_SemaWait(semaphore_t *pSem, uint32_t timeout)
             /* If timeout is 0 and semaphore is not available, return kStatus_OSA_Timeout. */
             return status_SYS_Timeout;
         }
+				else if(pSem->isWaiting)
+				{
+					currentTime = SYS_TimeGetMsec();
+					if(pSem->timeout <SYS_TimeDiff(pSem->time_start, currentTime))
+					{
+						SYS_DisableIRQGlobal();
+						pSem->isWaiting = false;
+						SYS_EnableIRQGlobal();
+						return status_SYS_Timeout;
+					}
+				}
+				else if (timeout != SYS_WAIT_FOREVER)
+				{
+					SYS_DisableIRQGlobal();
+					pSem->isWaiting = true;
+					SYS_EnableIRQGlobal();
+					pSem->time_start = SYS_TimeGetMsec();
+					pSem->timeout = timeout;
+				}
     }
-
     return status_SYS_Idle;
 }
 
@@ -181,6 +224,8 @@ system_status_t SYS_MsgDequeue(msg_queue_handler_t handler, void* pMsg)
 		pFrom = &handler->queueMem[handler->head];
 		pTo = (uint32_t*)pMsg;
 		
+		*pTo = *pFrom;
+		
 		++handler->head;
 		
 	/* Wrap the head pointer in case the end of the buffer is reach */
@@ -195,12 +240,39 @@ system_status_t SYS_MsgDequeue(msg_queue_handler_t handler, void* pMsg)
 			handler->isEmpty = true;
 		}
 		
-		SYS_EableIRQGlobal();
+		SYS_EnableIRQGlobal();
 		return status_SYS_Success; 
 	}
 	else
 	{
-		SYS_EableIRQGlobal();
+		SYS_EnableIRQGlobal();
 		return status_SYS_Error;
 	}
+}
+
+uint32_t SYS_TimeDiff(uint32_t time_start, uint32_t time_end)
+{
+	if(time_end >= time_start)
+	{
+		return (time_end-time_start);
+	}
+	else
+	{
+		return SYS_TIME_RANGE - time_start + time_end + 1; 
+	}
+}
+
+uint32_t SYS_TimeGetMsec(void)
+{
+	return LPTMR_Hal_GetCounterValue();
+}
+
+void SYS_TimeDelay(uint32_t delay)
+{
+	uint32_t currTime, timeStart;
+	timeStart = SYS_TimeGetMsec();
+	do
+	{
+		currTime = SYS_TimeGetMsec();
+	}while(delay >= SYS_TimeDiff(timeStart, currTime));
 }

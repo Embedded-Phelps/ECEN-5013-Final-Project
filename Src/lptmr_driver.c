@@ -22,9 +22,9 @@ lptmr_status_t LPTMR_Init(lptmr_state_t *userStatePtr, const lptmr_user_config_t
     }
 
     /* prescaler value 0 is invalid while working as pulse counter */
-    if ((kLptmrTimerModePulseCounter == userConfigPtr->timerMode) &&
+    if ((lptmrTimerModePulseCounter == userConfigPtr->timerMode) &&
          (true == userConfigPtr->prescalerEnable) &&
-         (kLptmrPrescalerDivide2 == userConfigPtr->prescalerValue))
+         (lptmrPrescalerDivide2 == userConfigPtr->prescalerValue))
     {
         return status_LPTMR_InvalidPrescalerValue;
     }
@@ -37,7 +37,7 @@ lptmr_status_t LPTMR_Init(lptmr_state_t *userStatePtr, const lptmr_user_config_t
 
     /* LPTMR prescaler configure */
     prescalerUserConfig.prescalerClockSelect = (lptmr_prescaler_clock_select_t)userConfigPtr->prescalerClockSource;
-    prescalerUserConfig.prescalerBypass = (uint8_t)(userConfigPtr->prescalerEnable == false);
+    prescalerUserConfig.prescalerBypass = (uint8_t)(userConfigPtr->prescalerEnable == true);
     prescalerUserConfig.prescalerValue = userConfigPtr->prescalerValue;
     LPTMR_Hal_SetPrescalerMode(prescalerUserConfig);
 
@@ -66,10 +66,9 @@ lptmr_status_t LPTMR_Init(lptmr_state_t *userStatePtr, const lptmr_user_config_t
     }
 
     /* Caculate prescaler clock frequency */
-    if (kLptmrTimerModeTimeCounter == userConfigPtr->timerMode)
+    if (lptmrTimerModeTimeCounter == userConfigPtr->timerMode)
     {
-        userStatePtr->prescalerClockHz = CLOCK_SYS_GetLptmrFreq(instance,
-                userConfigPtr->prescalerClockSource); ///????
+        userStatePtr->prescalerClockHz = 1000; ///????
 
         if (userConfigPtr->prescalerEnable)
         {
@@ -137,7 +136,7 @@ lptmr_status_t LPTMR_Stop(void)
 {
     assert(LPTMR_Hal_isClockEnabled());
 
-    LPTMR_Hal_Disable(void);
+    LPTMR_Hal_Disable();
 
     return status_LPTMR_Success;
 }
@@ -274,7 +273,7 @@ lptmr_status_t LPTMR_InstallCallback(lptmr_callback_t userCallback)
  * will be called inside the system-defined ISR.
  *
  *END*************************************************************************/
-void LPTMR_DRV_IRQHandler(uint32_t instance)
+void LPTMR0_IRQHandler(void)
 {
     assert(LPTMR_Hal_isClockEnabled());
 

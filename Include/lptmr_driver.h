@@ -3,7 +3,7 @@
 #define __LPTMR_DRIVER_H__
 
 #include "includes.h"
-
+#include "clock.h"
 /*!
  * @addtogroup lptmr_driver
  * @{

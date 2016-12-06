@@ -81,7 +81,7 @@ void GPIO_InputPinInit(const gpio_input_pin_user_config_t *inputPin)
     if ((inputPin->config.interrupt) && (g_portIrqId[port]))
     {
         /* Enable GPIO interrupt.*/
-        INT_SYS_EnableIRQ(g_portIrqId[port]); //?????
+        //INT_SYS_EnableIRQ(g_portIrqId[port]); //?????
     }
 }
 

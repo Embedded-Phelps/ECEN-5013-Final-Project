@@ -3,54 +3,21 @@
 #define __GPIO_H__
 
 #include "includes.h"
-
-/*!
- * @addtogroup gpio_driver
- * @{
- */
-
-/*!
- * @file
- *
- * The GPIO driver uses the virtual GPIO name rather than an actual port and a
- * pin number. By using the virtual name, each pin name is self-explanatory.
- * To use the GPIO driver, an enumeration variable must be predefined in the
- * user application files. The variable saves all GPIO pin information used
- * in a project.
- *
- * This example shows how to define the enumeration variable.
-   @code
-   // This is the enumeration to define virtual GPIO pin names.
-   // These members are used by "uint32_t pinName" in
-   // gpio_output_pin_user_config_t
-   // and gpio_input_pin_user_config_t. Usually defined in a header file.
-   enum _gpio_pins
-   {
-       kGpioLED1  = GPIO_MAKE_PIN(GPIOA_IDX, 5), // Orange LED.
-       kGpioLED2  = GPIO_MAKE_PIN(GPIOA_IDX, 6), // Yellow LED.
-       kGpioLED3  = GPIO_MAKE_PIN(GPIOA_IDX, 7), // Green LED.
-       kGpioLED4  = GPIO_MAKE_PIN(GPIOB_IDX, 8), // Red LED.
-   };
-   @endcode
- *
- * The port features such as "digital filter", "pull", are valid when
- * they are available in one of the pins. That doesn't mean, however, that all pins have the
- * capability to use such features. See the related reference manual for
- * accurate pin features.
- */
+#include "port_hal.h"
+#include "gpio_hal.h"
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
 /*! @brief Table of base addresses for GPIO instances. */
-extern GPIO_Type * const g_gpioBase[GPIO_INSTANCE_COUNT];
+//extern GPIO_Type * const g_gpioBase[GPIO_INSTANCE_COUNT];
 
 /*! @brief Table of base addresses for PORT instances. */
-extern PORT_Type * const g_portBase[PORT_INSTANCE_COUNT];
+//extern PORT_Type * const g_portBase[PORT_INSTANCE_COUNT];
 
 /* Table to save PORT IRQ enumeration numbers defined in CMSIS header file */
-extern const IRQn_Type g_portIrqId[PORT_INSTANCE_COUNT];
+//extern const IRQn_Type g_portIrqId[PORT_INSTANCE_COUNT];
 
 /*******************************************************************************
  * Definitions
@@ -92,12 +59,13 @@ extern const IRQn_Type g_portIrqId[PORT_INSTANCE_COUNT];
  * specific feature is valid in an individual pin. A configuration of
  * unavailable features is harmless, but takes no effect.
  */
-typedef struct GpioInputPin {
+typedef struct gpio_input_pin
+{
     bool isPullEnable;                  /*!< Enable or disable pull. */
     port_pull_t pullSelect;             /*!< Select internal pull(up/down) resistor.*/
     bool isPassiveFilterEnabled;        /*!< Enable or disable passive filter.*/
     port_interrupt_config_t interrupt;  /*!< Select interrupt/DMA request.*/
-} gpio_input_pin_t;
+}gpio_input_pin_t;
 
 /*!
  * @brief The GPIO output pin configuration structure.
@@ -107,11 +75,12 @@ typedef struct GpioInputPin {
  * ensure that the specific feature is valid in an individual pin. The configuration of
  * unavailable features is harmless, but takes no effect.
  */
-typedef struct GpioOutputPin {
+typedef struct gpio_output_pin
+{
     uint32_t outputLogic;               /*!< Set default output logic.*/
     port_slew_rate_t slewRate;          /*! Select fast/slow slew rate.*/
     port_drive_strength_t driveStrength;/*!< Select low/high drive strength.*/
-} gpio_output_pin_t;
+}gpio_output_pin_t;
 
 /*!
  * @brief The GPIO input pin structure.
@@ -119,10 +88,11 @@ typedef struct GpioOutputPin {
  * Although the pinName is defined as a uint32_t type, values assigned to the pinName
  * should be the enumeration names defined in the enum _gpio_pins.
  */
-typedef struct GpioInputPinUserConfig {
+typedef struct gpio_input_pin_user_config
+{
     uint32_t pinName;        /*!< Virtual pin name from enumeration defined by the user.*/
     gpio_input_pin_t config; /*!< Input pin configuration structure.*/
-} gpio_input_pin_user_config_t;
+}gpio_input_pin_user_config_t;
 
 /*!
  * @brief The GPIO output pin structure.
@@ -130,10 +100,11 @@ typedef struct GpioInputPinUserConfig {
  * Although the pinName is defined as a uint32_t type, values assigned to the pinName
  * should be the enumeration names defined in the enum _gpio_pins.
  */
-typedef struct GpioOutputPinUserConfig {
+typedef struct gpio_output_pin_user_config
+{
     uint32_t pinName;        /*!< Virtual pin name from enumeration defined by the user.*/
     gpio_output_pin_t config;/*!< Input pin configuration structure.*/
-} gpio_output_pin_user_config_t;
+}gpio_output_pin_user_config_t;
 
 /*******************************************************************************
  * API
@@ -310,8 +281,6 @@ void GPIO_ClearPinIntFlag(uint32_t pinName);
 #if defined(__cplusplus)
 }
 #endif
-
-/*! @} */
 
 #endif /* __GPIO_H__*/
 /*******************************************************************************

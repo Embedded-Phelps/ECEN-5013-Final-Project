@@ -2,8 +2,9 @@
 #define __TSI_H__
 
 #include "includes.h"
+#include "tsi_hal.h"
 
-typedef void (*tsi_callback_t)(uint32_t instance, void* usrData);
+typedef void (*tsi_callback_t)(void* usrData);
 
 typedef struct tsi_user_config
 {
@@ -43,6 +44,7 @@ typedef struct tsi_state
 	uint16_t counters[MAX_TSI_CHANNEL_INDEX];
 }tsi_state_t;
 
+extern tsi_state_t *tsiStatePtr;
 
 #if defined(__cplusplus)
 extern "C" {
