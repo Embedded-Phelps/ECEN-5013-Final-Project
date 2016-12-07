@@ -50,6 +50,8 @@ extern gpio_output_pin_user_config_t ledPins[];
 /* The i2c instance used for i2c connection by default */
 #define BOARD_I2C_INSTANCE              1
 
+#define PIT_TIMER_CNT (2)
+
 /* The bubble level demo information */
 #define BOARD_BUBBLE_TPM_INSTANCE       2
 #define BOARD_TPM_X_CHANNEL             0
@@ -68,6 +70,9 @@ extern gpio_output_pin_user_config_t ledPins[];
 #define BOARD_TSI_ELECTRODE_CNT         2
 #define BOARD_TSI_ELECTRODE_1           9
 #define BOARD_TSI_ELECTRODE_2           10
+#define TSI_THRESHOLD_SAMPLING			(100U)
+#define TSI_HIGHTHRESHOLD	(100U)
+#define TSI_LOWTHRESHOLD	(200U)
 
 #define LED1_EN (GPIO_OutputPinInit(&ledPins[0])) 	/*!< Enable target LED1 */
 #define LED2_EN (GPIO_OutputPinInit(&ledPins[1])) 	/*!< Enable target LED2 */
@@ -96,7 +101,7 @@ extern gpio_output_pin_user_config_t ledPins[];
 extern "C" {
 #endif /* __cplusplus */
 
-
+void Board_Pin_Init (void);
 
 #if defined(__cplusplus)
 }

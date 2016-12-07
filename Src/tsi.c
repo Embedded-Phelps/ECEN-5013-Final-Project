@@ -222,6 +222,36 @@ tsi_status_t TSI_GetCounter(const uint32_t channel, uint16_t *counter)
     return status_TSI_Success;
 }
 
+uint32_t TSI_GetUnTouchBaseline(uint8_t * tsiChn)
+{
+	uint8_t i, j;
+	uint16_t tsi_MeasureResult[BOARD_TSI_ELECTRODE_CNT];
+	uint32_t sum_Untouch = 0U;
+	uint32_t avg_Untouch = 0U;
+	
+	tsi_status_t tsi_Status;
+	
+	tsi_Status = TSI_MeasureBlocking();
+	if(tsi_Status != status_TSI_Success)
+	{
+		return -1;
+	}
+	for (i=0; i < TSI_THRESHOLD_SAMPLING; i++)
+	{
+		for(j = 0; j < BOARD_TSI_ELECTRODE_CNT; j++)
+		{
+			tsi_Status = TSI_GetCounter(tsiChn[j], &tsi_MeasureResult[j]);
+			if(tsi_Status != status_TSI_Success)
+			{
+				return -1;
+			}
+			sum_Untouch += tsi_MeasureResult[j];
+		}
+	}
+	avg_Untouch = sum_Untouch / (TSI_THRESHOLD_SAMPLING * BOARD_TSI_ELECTRODE_CNT);
+	return avg_Untouch;
+}
+
 void TSI0_IRQHandler(void)
 {
 	tsi_state_t *tsiState = tsiStatePtr;

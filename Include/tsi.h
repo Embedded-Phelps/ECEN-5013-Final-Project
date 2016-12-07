@@ -84,6 +84,8 @@ tsi_status_t TSI_SetCallbackFunc(const tsi_callback_t pCallbackFunc, void *usrDa
 
 //tsi_status_t TSI_SaveConfiguration(uint32_t instance, const tsi_mode_t mode, tsi_operation_mode_t *operationMode);
 
+uint32_t TSI_GetUnTouchBaseline(uint8_t * tsiChn);
+
 #if defined(__cplusplus)
 }
 #endif

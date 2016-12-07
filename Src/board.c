@@ -45,6 +45,7 @@ gpio_output_pin_user_config_t ledPins[] = {
 void Board_Pin_Init(void)
 {
 	/* Enable Clock gates */
+	SIM_SCGC5 |= SIM_SCGC5_PORTA_MASK | SIM_SCGC5_PORTB_MASK | SIM_SCGC5_PORTC_MASK | SIM_SCGC5_PORTD_MASK | SIM_SCGC5_PORTE_MASK;
 	
 	/* Configure pins for and Initialize the RGB LEDs */
 	LED1_SELECT;
@@ -58,8 +59,8 @@ void Board_Pin_Init(void)
 	LED3_OFF;
 	
 	/* Configure pin for and initialize SW1 */
-	SW1_SELECT;
-	SW1_EN;
+	//SW1_SELECT;
+	//SW1_EN;
 	
 	/* Configure pins for the UART0 */
 	

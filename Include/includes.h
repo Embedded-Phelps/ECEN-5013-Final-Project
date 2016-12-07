@@ -40,6 +40,12 @@
 #include "clock.h"
 #include "tsi.h"
 #include "tsi_hal.h"
+#include "pit_hal.h"
+#include "pit.h"
+#include "adc16_hal.h"
+#include "adc_driver.h"
+#include "adc.h"
+#include "task.h"
 
 //#include "power_manager.h"
 
@@ -51,9 +57,7 @@
   Macro 
 *********************************************************************************************************/
 
-#define TSI_HIGHTHRESHOLD	(100U)
-#define TSI_LOWTHRESHOLD	(200U)
-#define TSI_THRESHOLD_SAMPLING      (100U)
+
 
 #endif
 
