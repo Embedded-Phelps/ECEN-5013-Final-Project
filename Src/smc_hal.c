@@ -2,17 +2,17 @@
 
 static void smc_Hal_SetPowerModeRun(void)
 {
-	SMC_PMCTRL = SMC_PMCTRL_RUNM(smcRun);  //?????
+	SMC_PMCTRL = SMC_PMCTRL_RUNM(smcRun); 
 	while (statusRun != smc_Hal_GetCurrentPowerMode()){}
 }
 
 static void smc_Hal_SetPowerModeVLPR(void)
 {
-	SMC_PMCTRL = SMC_PMCTRL_RUNM(smcVLPR); 	//????
+	SMC_PMCTRL = SMC_PMCTRL_RUNM(smcVLPR); 
 	while (statusVLPR != smc_Hal_GetCurrentPowerMode()){}
 }
 
-smc_hal_error_t smc_Hal_SetPowerMode(const smc_power_mode_config_t *powerModeConfig)
+smc_error_t smc_Hal_SetPowerMode(const smc_power_mode_config_t *powerModeConfig)
 {
 	volatile uint32_t dummy;
 	power_mode_status_t currentPowerMode = smc_Hal_GetCurrentPowerMode();

@@ -57,6 +57,8 @@ void Board_Pin_Init(void)
 	LED1_OFF;
 	LED2_OFF;
 	LED3_OFF;
+	SW1_SELECT;
+	SW1_EN;
 	
 	/* Configure pin for and initialize SW1 */
 	//SW1_SELECT;

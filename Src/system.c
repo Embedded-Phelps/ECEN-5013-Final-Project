@@ -155,11 +155,12 @@ system_status_t SYS_SemaDestroy(semaphore_t *pSem)
     return status_SYS_Success;
 }
 
-msg_queue_handler_t SYS_MsgQueueCreate(msg_queue_t *queue, uint16_t queue_size)
+msg_queue_handler_t SYS_MsgQueueCreate(msg_queue_t *queue, uint8_t queue_size)
 {
 	assert(queue);
 	
 	queue->size = queue_size;
+	queue->queueMem = (uint8_t *)malloc(sizeof(uint8_t)*queue_size);
 	queue->head = 0;
 	queue->tail = 0;
 	queue->isEmpty = true;
@@ -171,7 +172,8 @@ system_status_t SYS_MsgEnqueue(msg_queue_handler_t handler, void* pMsg)
 {
 	assert(handler);
 	
-	uint32_t *pFrom, *pTo;
+	uint8_t *pFrom;
+	uint8_t *pTo;
 	
 	/* Prevent the enqueue process from being interrupted */
 	SYS_DisableIRQGlobal();
@@ -179,8 +181,9 @@ system_status_t SYS_MsgEnqueue(msg_queue_handler_t handler, void* pMsg)
 	/* Check if there is room in the queue for new message */
 	if((handler->tail != handler->head) || (handler->isEmpty))
 	{
-		pFrom = (uint32_t *) pMsg;
+		pFrom = (uint8_t *) pMsg;
 		pTo	= &handler->queueMem[handler->tail];
+		//pTo	= handler->queueMem;
 		
 		*pTo = *pFrom;
 		
@@ -213,7 +216,7 @@ system_status_t SYS_MsgDequeue(msg_queue_handler_t handler, void* pMsg)
 {
 	assert(handler);
 	
-	uint32_t *pFrom, *pTo;
+	uint8_t *pFrom, *pTo;
 	
 	/* Prevent the enqueue process from being interrupted */
 	SYS_DisableIRQGlobal();
@@ -222,7 +225,7 @@ system_status_t SYS_MsgDequeue(msg_queue_handler_t handler, void* pMsg)
 	if(!handler->isEmpty)
 	{
 		pFrom = &handler->queueMem[handler->head];
-		pTo = (uint32_t*)pMsg;
+		pTo = (uint8_t*)pMsg;
 		
 		*pTo = *pFrom;
 		

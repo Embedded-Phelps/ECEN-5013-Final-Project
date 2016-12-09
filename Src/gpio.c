@@ -8,9 +8,7 @@ PORT_Type * const g_portBase[PORT_INSTANCE_COUNT] = PORT_BASE_PTRS;
 
 /* Table to save port IRQ enum numbers defined in CMSIS files. */
 const IRQn_Type g_portIrqId[PORT_INSTANCE_COUNT] = PORT_IRQS;
-/*******************************************************************************
- * Code
- ******************************************************************************/
+
 
 /*FUNCTION**********************************************************************
  *
@@ -81,7 +79,7 @@ void GPIO_InputPinInit(const gpio_input_pin_user_config_t *inputPin)
     if ((inputPin->config.interrupt) && (g_portIrqId[port]))
     {
         /* Enable GPIO interrupt.*/
-        //INT_SYS_EnableIRQ(g_portIrqId[port]); //?????
+        NVIC_EnableIRQ(g_portIrqId[port]); //?????
     }
 }
 

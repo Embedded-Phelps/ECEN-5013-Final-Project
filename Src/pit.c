@@ -11,6 +11,7 @@ uint64_t g_pitSourceClock;
 /* pit channel number used by microseconds functions */
 uint8_t g_pitUsChannel;
 
+pit_user_config_t * pitConfigPtr = NULL;
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -55,6 +56,7 @@ pit_status_t PIT_Init(bool isRunInDebug)
 void PIT_InitChannel(uint32_t channel, const pit_user_config_t * config)
 {
     /* Set timer period.*/
+		pitConfigPtr = config;
     PIT_SetTimerPeriodByUs(channel, config->periodUs);
 
     /* Enable or disable interrupt.*/
@@ -350,6 +352,14 @@ bool PIT_IsIntPending(uint32_t channel)
     return PIT_Hal_IsIntPending(channel);
 }
 
+void PIT_IRQHandler(void)
+{
+	PIT_Hal_ClearIntFlag(0U);
+	if (pitConfigPtr->isInterruptEnabled)
+	{
+		(*(pitConfigPtr->callbackFunc))();
+	}
+}
 /*******************************************************************************
  * EOF
  ******************************************************************************/

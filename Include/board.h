@@ -24,7 +24,6 @@ enum _gpio_pins
     gpioLED3        = GPIO_MAKE_PIN(GPIOD_IDX,  1),   /* FRDM-KL25Z4 Blue LED */
     gpioSW1         = GPIO_MAKE_PIN(GPIOD_IDX,  0),   /* External switch */
 };
-
 extern gpio_input_pin_user_config_t switchPins[];
 extern gpio_output_pin_user_config_t ledPins[];
 

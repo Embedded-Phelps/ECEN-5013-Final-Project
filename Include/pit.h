@@ -29,11 +29,17 @@
  * is bypassed inside the PIT_InitChannel() function.
  * @internal gui name="PIT configuration" id="pitCfg"
  */
+ 
+typedef void (*pit_callback_t)(void);
+
 typedef struct pit_user_config 
 {
-    bool isInterruptEnabled;  /*!< Timer interrupt 0-disable/1-enable @internal gui name="Interrupt" id="Interrupt" default="true" */
-    uint32_t periodUs;        /*!< Timer period in unit of microseconds @internal gui name="Period" id="Period" */
+    bool isInterruptEnabled; 
+    uint32_t periodUs;  
+		pit_callback_t callbackFunc;
 } pit_user_config_t;
+
+extern pit_user_config_t * pitConfigPtr;
 
 /*******************************************************************************
  * API

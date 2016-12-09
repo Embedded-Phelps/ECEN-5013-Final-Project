@@ -5,7 +5,7 @@ lptmr_state_t * lptmrStatePtr = NULL;
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_Init
+ * Function Name : LPTMR_Init
  * Description   : initializes the LPTMR driver.
  * This function will initialize the LPTMR driver according to user configure
  * strcuture.
@@ -81,7 +81,7 @@ lptmr_status_t LPTMR_Init(lptmr_state_t *userStatePtr, const lptmr_user_config_t
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_Deinit
+ * Function Name : LPTMR_Deinit
  * Description   : Deinit the LPTMR driver.
  * This function will deinit the LPTMR driver, disable LPTMR clock,
  * and disable LPTMR interrupt.
@@ -111,7 +111,7 @@ lptmr_status_t LPTMR_Deinit(void)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_Start
+ * Function Name : LPTMR_Start
  * Description   : Start LPTMR counter
  * This function will start LPTMR internal counter to count the time or pulse
  *
@@ -143,7 +143,7 @@ lptmr_status_t LPTMR_Stop(void)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_SetTimerPeriodUs
+ * Function Name : LPTMR_SetTimerPeriodUs
  * Description   : Set LPTMR timer counter period with unit microsecond
  * This function is used to set LPTMR timer counter period with unit microsecond
  *
@@ -186,7 +186,7 @@ lptmr_status_t LPTMR_SetTimerPeriodUs(uint32_t us)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_GetCurrentTimeUs
+ * Function Name : LPTMR_GetCurrentTimeUs
  * Description   : Get LPTMR current time with unit microsecond
  * This function is used to get LPTMR current time with unit microsecond
  *
@@ -212,7 +212,7 @@ uint32_t LPTMR_GetCurrentTimeUs(void)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_SetPulsePeriodCount
+ * Function Name : LPTMR_SetPulsePeriodCount
  * Description   : Set the pulse period value while LPTMR working in pulse counter mode
  * This function is used to set the pulse period value while LPTMR working in pulse counter mode
  *
@@ -229,7 +229,7 @@ lptmr_status_t LPTMR_SetPulsePeriodCount(uint32_t pulsePeriodCount)
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_DRV_GetCurrentPulseCount
+ * Function Name : LPTMR_GetCurrentPulseCount
  * Description   : Get current pulse count captured in the pulse input pin
  * This function is used to get current pulse count captured in the pulse input pin
  *
@@ -267,7 +267,7 @@ lptmr_status_t LPTMR_InstallCallback(lptmr_callback_t userCallback)
 
 /*FUNCTION*********************************************************************
  *
- * Function Name : LPTMR_DRV_IRQHandler
+ * Function Name : LPTMR_IRQHandler
  * Description   : The driver-defined ISR in LPTMR module.
  * It includes the process for interrupt mode defined by driver. Currently, it
  * will be called inside the system-defined ISR.

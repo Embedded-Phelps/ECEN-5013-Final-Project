@@ -11,8 +11,8 @@
 
 uint32_t SystemBusClock = DEFAULT_BUS_CLOCK;
 
-CircBuf_t * tx_buf; 
-CircBuf_t * rx_buf;
+uint8_t  tx_buf; 
+uint8_t  rx_buf;
 
 void uart0_Init( uint32_t ulBaudRate,
 				 uint8_t  ucParityEnable,
@@ -79,8 +79,6 @@ void uart0_Init( uint32_t ulBaudRate,
 	#endif
 	
 	/* Initialize TX and RX circular buffer */
-	tx_buf=cb_Init(tx_buf, 800);
-	rx_buf=cb_Init(rx_buf, 800);
 }
 
 void uart0_TranCtl(uint8_t ucTxEnable, 
@@ -90,43 +88,40 @@ void uart0_TranCtl(uint8_t ucTxEnable,
     UART0_C2 |= (ucTxEnable << UART0_C2_TE_SHIFT)|
                 (ucRxEnable << UART0_C2_RE_SHIFT);
 }
-/*
+
 uint8_t uart0_GetChar(void)
 {
-    UART0_MemMapPtr uartPtr = UART0_BASE_PTR;
-
-    while (!(UART0_S1_REG(uartPtr) & UART0_S1_RDRF_MASK));                   
-    return UART0_D_REG(uartPtr);                                              
+    while (!(UART0_S1 & UART0_S1_RDRF_MASK));                   
+    return (uint8_t )UART0_D;                                              
 }
 
-void uart0_SendChar(int8_t ucCh)
+void log_Raw(uint8_t ucCh)
 {
-    UART0_MemMapPtr uartPtr = UART0_BASE_PTR;
-
-    while(!((UART0_S1_REG(uartPtr) & UART0_S1_TDRE_MASK)));                  
-    UART0_D_REG(uartPtr) = ucCh;                                           
+    while(!(UART0_S1 & UART0_S1_TDRE_MASK));                  
+    UART0_D = ucCh;                                           
 }
 
 void uart0_SendString(int8_t *pData)
 {
     while (*pData != '\0') { 
-        uart0_SendChar(*pData++);
+        log_Raw(*pData++);
     }    
 }
-*/
+
 
 void UART0_IRQHandler(void)
 {     
 	__asm("cpsid i");
-	if(((UART0_S1 & UART0_S1_TDRE_MASK))&&(cb_IsEmpty(tx_buf)!=EMPTY)){
-		cb_Dequeue(tx_buf, &UART0_D);
-		if(cb_IsEmpty(tx_buf)==EMPTY)
-			UART0_C2 &= ~UART0_C2_TIE_MASK;
-   }                                                                           
+	/*if(UART0_S1 & UART0_S1_TDRE_MASK)
+	{
+		tx_buf = UART0_D;
+		UART0_C2 &= ~UART0_C2_TIE_MASK;
+  } */                                                                           
                                                                                   
-   if((UART0_S1 & UART0_S1_RDRF_MASK)&&(cb_IsFull(rx_buf)!=FULL)){                        
-		cb_Enqueue(rx_buf, (uint8_t)UART0_D);
-   }   
+	if(UART0_S1 & UART0_S1_RDRF_MASK)
+	{                        
+		rx_buf = (uint8_t)UART0_D;
+  }   
    __asm("cpsie i");
 }
  

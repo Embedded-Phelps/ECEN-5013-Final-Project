@@ -34,7 +34,7 @@ extern void uart0_Init( uint32_t ulBaudRate,
 					   uint8_t  ucStopBit);
 					   
 extern void uart0_TranCtl( uint8_t ucTxEnable, uint8_t ucRxEnable);
-						   
+void log_Raw(uint8_t ucCh);
 extern void UART0_IRQHandler(void);	
 
 /*

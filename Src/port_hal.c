@@ -8,7 +8,7 @@
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : PORT_HAL_SetLowGlobalPinCtrl
+ * Function Name : PORT_Hal_SetLowGlobalPinCtrl
  * Description   : Configure low half of pin control register for the same settings,
  *                 this function operates pin 0 -15 of one specific port.
  *
@@ -22,7 +22,7 @@ void PORT_Hal_SetLowGlobalPinCtrl(PORT_Type * base, uint16_t lowPinSelect, uint1
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : PORT_HAL_SetHighGlobalPinCtrl
+ * Function Name : PORT_Hal_SetHighGlobalPinCtrl
  * Description   : Configure high half of pin control register for the same
  *                 settings, this function operates pin 16 -31 of one specific port.
  *

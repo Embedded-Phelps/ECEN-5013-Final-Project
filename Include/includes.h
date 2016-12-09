@@ -46,7 +46,8 @@
 #include "adc_driver.h"
 #include "adc.h"
 #include "task.h"
-
+#include "smc_hal.h"
+#include "uart.h"
 //#include "power_manager.h"
 
 /*********************************************************************************************************

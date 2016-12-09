@@ -1,18 +1,15 @@
-#include "includes.h"
-
-#define ST_MSG_QUEUE_SIZE				(16U)
-
-#define ST_KEY_PRESSED_MSG			(1U)
-
-#define ST_PERIODIC_EVT_UNITPERIOD		(1000U)
-#define ST_SENSE_TOUCH_EVT			(0x00000001U)
-#define ST_READ_TEMP_EVT				(0x00000002U)
-#define ST_BLINK_LED_EVT				(0x00000004U)
+#include "includes.h" 
 
 static bool system_alarm = 0;
 
+smc_power_mode_config_t powerMode = 
+{
+	.powerModeName = powerModeWait
+};
+
 msg_queue_t msgQueue;
 msg_queue_handler_t msgQueue_Handler;
+uint8_t msg;
 
 uint32_t event = 0;
 
@@ -24,13 +21,12 @@ uint8_t tsi_Channel[BOARD_TSI_ELECTRODE_CNT];
 uint32_t unTouch;
 
 static void ST_TaskInit(void);
-static void ST_processAppMsg(uint32_t *pMsg);
+static void ST_processAppMsg(uint8_t *pMsg);
 static void ST_processReadTempEvt(void);
 static void ST_processSenseTouchEvt(void);
 
-void PIT_IRQHandler(void)
+void PIT_User_Callback(void)
 {
-	PIT_Hal_ClearIntFlag(0U);
 	++pitCounter;
 	
 	event |= ST_SENSE_TOUCH_EVT;
@@ -42,10 +38,15 @@ void PIT_IRQHandler(void)
 	if(pitCounter == 1000)
 	{
 		event |= ST_READ_TEMP_EVT;
-		event |= ST_BLINK_LED_EVT;
+ 		event |= ST_BLINK_LED_EVT;
 		pitCounter = 0;
 	}
-	// wake up task from sleep;
+}
+
+void PORTD_IRQHandler(void)
+{
+	uint8_t msg = ST_KEY_PRESSED_MSG;
+	SYS_MsgEnqueue(msgQueue_Handler, &msg);
 }
 
 static void ST_TaskInit(void)
@@ -83,7 +84,8 @@ static void ST_TaskInit(void)
 	static const pit_user_config_t ch0Config = 
 	{
 		.isInterruptEnabled = true,
-			.periodUs = ST_PERIODIC_EVT_UNITPERIOD
+			.periodUs = ST_PERIODIC_EVT_UNITPERIOD,
+		.callbackFunc = PIT_User_Callback
 	};
 	
 	/* LPTMR Initialization */
@@ -109,6 +111,7 @@ static void ST_TaskInit(void)
 	unTouch = TSI_GetUnTouchBaseline(tsi_Channel);
 	
 	/* UART0 for logging Initialization */
+	uart0_Init(9600,0,0,8,1);
 	
 	/* Construct a message queue */
 	msgQueue_Handler = SYS_MsgQueueCreate(&msgQueue, ST_MSG_QUEUE_SIZE);
@@ -118,24 +121,25 @@ static void ST_TaskInit(void)
 	SYS_EnableIRQGlobal(); // Enable system interrupt
 	
 	PIT_StartTimer(0);
+	
+	log_Raw(SYSTEM_INITIALIZED);
 }
 
 void ST_TaskFunc(void)
 {
-	uint32_t msg;
 	
 	ST_TaskInit();	// Task Initialization 
-	
 	for(;;)
 	{
 		// Entering low power mode -- semaphore pending state
-		
+		//smc_Hal_SetPowerMode(&powerMode);
+		//log_Raw(SYSTEM_ENTERED_WAIT);
 	/* Process app message */
 		while (status_SYS_Success == SYS_MsgDequeue(msgQueue_Handler, &msg))
 		{
 			if (msg)
 			{
-				//ST_processAppMsg(&msg);
+				ST_processAppMsg(&msg);
 			}
 		}
 		
@@ -160,21 +164,30 @@ void ST_TaskFunc(void)
 				//BLINK LED
 				LED2_OFF;
 				LED1_TOGGLE;
+				log_Raw(SYSTEM_NORMAL);
 			}
 			else
 			{
+				LED1_OFF;
 				LED2_ON;
+				
 			}
 		}
 	}
 }
 
-static void ST_processAppMsg(uint32_t *pMsg)
+static void ST_processAppMsg(uint8_t *pMsg)
 {
 	switch (*pMsg)
 	{
 		case ST_KEY_PRESSED_MSG:
-			//call key pressed callback
+			LED1_ON;
+			LED2_ON;
+			LED3_ON;
+			SYS_TimeDelay(10);
+			LED1_OFF;
+			LED2_OFF;
+			LED3_OFF;
 			break;
 			
 		default:	//do nothing
@@ -185,16 +198,19 @@ static void ST_processReadTempEvt(void)
 {
 	int32_t temp;
 	
+	log_Raw(READING_SYS_TEMPERATURE);
 	temp = read_OnChipTemperature(); 
-	
+	log_Raw((uint8_t)temp);
 	/* check if temperature is abnormal */
-	if((temp > 27) || (temp < 23))
+	if((temp > 27) || (temp < 20))
 	{
 		system_alarm = true;
+		log_Raw(SYSTEM_TEMPERATURE_NORMAL);
 	}
 	else
 	{
 		system_alarm = false;
+		log_Raw(SYSTEM_TEMPERATURE_OUTOFRANGE);
 	}
 }
 
@@ -227,6 +243,7 @@ static void ST_processSenseTouchEvt(void)
     if(avgMeasure > unTouch + 10)
     {
         LED3_ON;
+				log_Raw(SYSTEM_SENSED_TOUCH);
     }
     else
     {

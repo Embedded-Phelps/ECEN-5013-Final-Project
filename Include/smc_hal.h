@@ -14,14 +14,14 @@
 
 typedef enum power_modes
 {
-	PowerModeRun 	= (0x01U << 0U),
-	PowerModeWait 	= (0x01U << 1U),
-	PowerModeStop 	= (0x01U << 2U),
-	PowerModeVLPR 	= (0x01U << 3U),
-	PowerModeVLPW 	= (0x01U << 4U),
-	PowerModeVLPS 	= (0x01U << 5U),
-	PowerModeLLS 	= (0x01U << 6U),
-	PowerModeVLLS 	= (0x01U << 7U),
+	powerModeRun 	= (0x01U << 0U),
+	powerModeWait 	= (0x01U << 1U),
+	powerModeStop 	= (0x01U << 2U),
+	powerModeVLPR 	= (0x01U << 3U),
+	powerModeVLPW 	= (0x01U << 4U),
+	powerModeVLPS 	= (0x01U << 5U),
+	powerModeLLS 	= (0x01U << 6U),
+	powerModeVLLS 	= (0x01U << 7U),
 }power_modes_t;
 
 typedef enum smc_error

@@ -3,7 +3,7 @@
 
 /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_HAL_Init
+ * Function Name : LPTMR_Hal_Init
  * Description   : Initialize LPTMR module to reset state.
  *
  *END**************************************************************************/
@@ -32,7 +32,7 @@ void LPTMR_Hal_Init(void)
 
  /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_HAL_SetTimerWorkingMode
+ * Function Name : LPTMR_Hal_SetTimerWorkingMode
  * Description   : Config the LPTMR working mode.
  *
  *END**************************************************************************/
@@ -70,7 +70,7 @@ void LPTMR_Hal_SetPrescalerMode(lptmr_prescaler_user_config_t prescaler_config)
 
  /*FUNCTION**********************************************************************
  *
- * Function Name : LPTMR_HAL_GetCounterValue
+ * Function Name : LPTMR_Hal_GetCounterValue
  * Description   : Gets the LPTMR counter value..
  *
  *END**************************************************************************/

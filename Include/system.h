@@ -30,10 +30,10 @@ typedef struct mutex
 
 typedef struct MsgQueue
 {
-    uint32_t              *queueMem;      /*!< Points to the queue memory               */
-    uint16_t               size;          /*!< The size of the queue        */
-    uint16_t               head;          /*!< Index of the next message to be read     */
-    uint16_t               tail;          /*!< Index of the next place to write to      */
+    uint8_t              *queueMem;      /*!< Points to the queue memory               */
+    uint8_t               size;          /*!< The size of the queue        */
+    uint8_t               head;          /*!< Index of the next message to be read     */
+    uint8_t               tail;          /*!< Index of the next place to write to      */
     volatile bool          isEmpty;       /*!< Whether queue is empty                   */
 }msg_queue_t;
 
@@ -70,7 +70,7 @@ system_status_t SYS_SemaDestroy(semaphore_t *pSem);
 
 
 
-msg_queue_handler_t SYS_MsgQueueCreate(msg_queue_t *queue, uint16_t queue_size);
+msg_queue_handler_t SYS_MsgQueueCreate(msg_queue_t *queue, uint8_t queue_size);
 
 system_status_t SYS_MsgEnqueue(msg_queue_handler_t handler, void* pMsg);
 
